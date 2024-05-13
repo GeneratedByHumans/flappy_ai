@@ -1,5 +1,5 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
 canvas.width = 320;
 canvas.height = 480;
@@ -11,7 +11,7 @@ let bird = {
   height: 20,
   gravity: 0.4,
   lift: -7,
-  velocity: 0
+  velocity: 0,
 };
 
 let pipes = [];
@@ -21,7 +21,7 @@ let frame = 0;
 let pipeInterval = 110;
 
 function drawBird() {
-  ctx.fillStyle = 'yellow';
+  ctx.fillStyle = "yellow";
   ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
 }
 
@@ -39,8 +39,8 @@ function updateBird() {
 }
 
 function drawPipes() {
-  pipes.forEach(pipe => {
-    ctx.fillStyle = 'green';
+  pipes.forEach((pipe) => {
+    ctx.fillStyle = "green";
     ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
     ctx.fillRect(pipe.x, pipe.top + pipeGap, pipeWidth, canvas.height);
   });
@@ -49,19 +49,21 @@ function drawPipes() {
 function updatePipes() {
   if (frame % pipeInterval === 0) {
     let top = Math.random() * (canvas.height - pipeGap - 20) + 10;
-    pipes.push({x: canvas.width, top: top});
+    pipes.push({ x: canvas.width, top: top });
   }
-  pipes.forEach(pipe => {
+  pipes.forEach((pipe) => {
     pipe.x -= 2;
   });
-  pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
+  pipes = pipes.filter((pipe) => pipe.x + pipeWidth > 0);
 }
 
 function checkCollision() {
-  pipes.forEach(pipe => {
-    if (bird.x < pipe.x + pipeWidth &&
-        bird.x + bird.width > pipe.x &&
-        (bird.y < pipe.top || bird.y + bird.height > pipe.top + pipeGap)) {
+  pipes.forEach((pipe) => {
+    if (
+      bird.x < pipe.x + pipeWidth &&
+      bird.x + bird.width > pipe.x &&
+      (bird.y < pipe.top || bird.y + bird.height > pipe.top + pipeGap)
+    ) {
       resetGame();
     }
   });
@@ -85,7 +87,7 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
-canvas.addEventListener('click', () => {
+canvas.addEventListener("click", () => {
   bird.velocity = bird.lift;
 });
 

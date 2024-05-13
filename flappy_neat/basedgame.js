@@ -170,6 +170,17 @@ canvas.addEventListener("click", () => {
   }
 });
 
+document.addEventListener("keydown", (event) => {
+  if (event.code === "Space") {
+    if (gamePaused) {
+      resetGame();
+      gamePaused = false;
+    } else {
+      bird.velocity = bird.lift;
+    }
+  }
+});
+
 function resetGame() {
   bird.y = 150;
   bird.velocity = 0;
@@ -197,6 +208,12 @@ function gameLoop() {
 
 canvas.addEventListener("click", () => {
   bird.velocity = bird.lift;
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.code === "Space") {
+    bird.velocity = bird.lift;
+  }
 });
 
 gameLoop();
