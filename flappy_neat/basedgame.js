@@ -1,17 +1,17 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
 
 canvas.width = 320;
 canvas.height = 480;
 
 let birdSprite = new Image();
-birdSprite.src = 'assets/bird.png'; // Update path as necessary
+birdSprite.src = "assets/bird.png"; // Update path as necessary
 
 let pipeSprite = new Image();
-pipeSprite.src = 'assets/pipe.png'; // Update path as necessary
+pipeSprite.src = "assets/pipe.png"; // Update path as necessary
 
 let backgroundSprite = new Image();
-backgroundSprite.src = 'assets/flappybg.png'; // Update path as necessary
+backgroundSprite.src = "assets/flappybg.png"; // Update path as necessary
 
 let bird = {
   x: 50,
@@ -20,7 +20,7 @@ let bird = {
   height: 30,
   gravity: 0.4,
   lift: -7,
-  velocity: 0
+  velocity: 0,
 };
 
 let pipes = [];
@@ -41,22 +41,30 @@ function increaseScore() {
 }
 
 function displayScores() {
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "#FFFFFF";
   ctx.font = "16px Arial";
-  ctx.fillText("Score: " + score, canvas.width - 100, 20);
-  ctx.fillText("High Score: " + highScore, canvas.width - 100, 40);
+  ctx.textAlign = "right";
+  ctx.fillText(`Score: ${score}`, canvas.width - 10, 30);
+  ctx.fillText(`High Score: ${highScore}`, canvas.width - 10, 50);
 }
-
 
 function drawBird() {
   ctx.save(); // Save the current canvas context
   ctx.translate(bird.x + bird.width / 2, bird.y + bird.height / 2); // Move the rotation point to the center of the bird
-  let rotation = Math.max(Math.min(bird.velocity / 10, Math.PI / 2), -Math.PI / 2); // Clamp the rotation between -90 and 90 degrees
+  let rotation = Math.max(
+    Math.min(bird.velocity / 10, Math.PI / 2),
+    -Math.PI / 2
+  ); // Clamp the rotation between -90 and 90 degrees
   ctx.rotate(rotation);
-  ctx.drawImage(birdSprite, -bird.width / 2, -bird.height / 2, bird.width, bird.height); // Draw the bird at adjusted position
+  ctx.drawImage(
+    birdSprite,
+    -bird.width / 2,
+    -bird.height / 2,
+    bird.width,
+    bird.height
+  ); // Draw the bird at adjusted position
   ctx.restore(); // Restore the original canvas context
 }
-
 
 function updateBird() {
   bird.velocity += bird.gravity;
@@ -72,7 +80,7 @@ function updateBird() {
 }
 
 function drawPipes() {
-  pipes.forEach(pipe => {
+  pipes.forEach((pipe) => {
     let pipeTotalHeight = pipeSprite.height - 150; // Total drawable height of the pipes (sprite height minus gap)
     let topPipeHeight = pipe.top;
     let bottomPipeHeight = pipeTotalHeight - topPipeHeight;
@@ -81,7 +89,17 @@ function drawPipes() {
     let topPipeSpriteY = (pipeSprite.height - 150) / 2 - topPipeHeight;
 
     // Draw top part of the pipe
-    ctx.drawImage(pipeSprite, 0, topPipeSpriteY, pipeWidth, topPipeHeight, pipe.x, 0, pipeWidth, topPipeHeight);
+    ctx.drawImage(
+      pipeSprite,
+      0,
+      topPipeSpriteY,
+      pipeWidth,
+      topPipeHeight,
+      pipe.x,
+      0,
+      pipeWidth,
+      topPipeHeight
+    );
 
     // Calculate the Y position where the bottom pipe should start on the canvas
     let bottomPipeY = topPipeHeight + 150;
@@ -90,53 +108,60 @@ function drawPipes() {
     let bottomPipeSpriteY = (pipeSprite.height + 150) / 2;
 
     // Draw bottom part of the pipe
-    ctx.drawImage(pipeSprite, 0, bottomPipeSpriteY, pipeWidth, bottomPipeHeight, pipe.x, bottomPipeY, pipeWidth, bottomPipeHeight);
+    ctx.drawImage(
+      pipeSprite,
+      0,
+      bottomPipeSpriteY,
+      pipeWidth,
+      bottomPipeHeight,
+      pipe.x,
+      bottomPipeY,
+      pipeWidth,
+      bottomPipeHeight
+    );
   });
 }
-
 
 function updatePipes() {
   if (frame % pipeInterval === 0) {
     let top = Math.random() * (canvas.height - pipeGap - 20) + 10;
-    pipes.push({x: canvas.width, top: top, scored: false});
+    pipes.push({ x: canvas.width, top: top, scored: false });
   }
-  pipes.forEach(pipe => {
+  pipes.forEach((pipe) => {
     if (!pipe.scored && pipe.x + pipeWidth < bird.x) {
       increaseScore();
       pipe.scored = true; // Ensure score is only increased once per pipe
     }
     pipe.x -= 2;
   });
-  pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
+  pipes = pipes.filter((pipe) => pipe.x + pipeWidth > 0);
 }
 
 function checkCollision() {
-  pipes.forEach(pipe => {
-    if (bird.x < pipe.x + pipeWidth &&
-        bird.x + bird.width > pipe.x &&
-        (bird.y < pipe.top || bird.y + bird.height > pipe.top + pipeGap)) {
+  pipes.forEach((pipe) => {
+    if (
+      bird.x < pipe.x + pipeWidth &&
+      bird.x + bird.width > pipe.x &&
+      (bird.y < pipe.top || bird.y + bird.height > pipe.top + pipeGap)
+    ) {
       gameOver();
     }
   });
 }
 
-
-
 function gameOver() {
-
-  
-
   gamePaused = true;
   ctx.fillStyle = "rgba(0,0,0,0.5)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "white";
+  ctx.textAlign = "center";
   ctx.font = "24px Arial";
-  ctx.fillText("Game Over", canvas.width / 2 - 70, canvas.height / 2);
-  ctx.fillText("Score: " + score, canvas.width / 2 - 70, canvas.height / 2 + 30);
-  ctx.fillText("Click to Restart", canvas.width / 2 - 70, canvas.height / 2 + 60);
+  ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
+  ctx.fillText("Score: " + score, canvas.width / 2, canvas.height / 2 + 30);
+  ctx.fillText("Click to Restart", canvas.width / 2, canvas.height / 2 + 60);
 }
 
-canvas.addEventListener('click', () => {
+canvas.addEventListener("click", () => {
   if (gamePaused) {
     resetGame();
     gamePaused = false;
@@ -155,8 +180,6 @@ function resetGame() {
   requestAnimationFrame(gameLoop); // Restart the game loop
 }
 
-
-
 function gameLoop() {
   if (!gamePaused) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -172,8 +195,7 @@ function gameLoop() {
   }
 }
 
-
-canvas.addEventListener('click', () => {
+canvas.addEventListener("click", () => {
   bird.velocity = bird.lift;
 });
 
