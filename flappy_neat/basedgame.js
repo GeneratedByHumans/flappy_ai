@@ -191,19 +191,34 @@ function resetGame() {
   requestAnimationFrame(gameLoop); // Restart the game loop
 }
 
-function gameLoop() {
+let lastTime = 0;
+const fixedTimeStep = 1000 / 60; // 60 updates per second
+
+function gameLoop(timestamp) {
+  if (!lastTime) {
+    lastTime = timestamp;
+  }
+  const delta = timestamp - lastTime;
+
   if (!gamePaused) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(backgroundSprite, 0, 0, canvas.width, canvas.height);
-    updateBird();
+
+    let steps = Math.floor(delta / fixedTimeStep);
+    for (let i = 0; i < steps; i++) {
+      updateBird();
+      updatePipes();
+      checkCollision();
+      frame++;
+    }
+
     drawBird();
-    updatePipes();
     drawPipes();
-    checkCollision();
     displayScores();
-    frame++;
-    requestAnimationFrame(gameLoop);
+    lastTime += steps * fixedTimeStep;
   }
+
+  requestAnimationFrame(gameLoop);
 }
 
 canvas.addEventListener("click", () => {
